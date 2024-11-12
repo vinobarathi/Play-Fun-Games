@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fun Mini Games</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url("Gaming.jpg.jpeg");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+            background-color: #f0f0f5;
+            color: #100f0f;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            color: #f6f2ef;
+        }
+        .game-container {
+            width: 100%;
+            max-width: 500px;
+            background-color: #25b88f;
+            
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .game {
+            margin-bottom: 40px;
+        }
+        button {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 4px;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #555;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 5px;
+        }
+        .cell {
+            background-color: #ddd;
+            padding: 20px;
+            text-align: center;
+            font-size: 24px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Play Fun Games</h1>
+
+    <!-- Tic-Tac-Toe Game -->
+    <div class="game-container game">
+        <h2>Tic-Tac-Toe</h2>
+        <div class="grid" id="ticTacToeGrid">
+            
+        </div>
+        <p id="ticTacToeMessage"></p>
+        <button onclick="resetTicTacToe()">Reset Game</button>
+    </div>
+
+    <!-- Rock Paper Scissors Game -->
+    <div class="game-container game">
+        <h2>Rock-Paper-Scissors</h2>
+        <p>Choose your move:</p>
+        <button onclick="playRPS('Rock')">Rock</button>
+        <button onclick="playRPS('Paper')">Paper</button>
+        <button onclick="playRPS('Scissors')">Scissors</button>
+        <p id="rpsResult"></p>
+    </div>
+
+    <!-- Guess the Number Game -->
+    <div class="game-container game">
+        <h2>Guess the Number</h2>
+        <p>Guess a number between 1 and 10:</p>
+        <input type="number" id="guessInput" min="1" max="10">
+        <button onclick="playGuess()">Submit Guess</button>
+        <p id="guessMessage"></p>
+        <button onclick="resetGuess()">Reset Game</button>
+    </div>
+
+    <script>
+      
+        const cells = Array(9).fill(null);
+        let currentPlayer = 'X';
+        const ticTacToeGrid = document.getElementById('ticTacToeGrid');
+        const ticTacToeMessage = document.getElementById('ticTacToeMessage');
+
+        function renderTicTacToe() {
+            ticTacToeGrid.innerHTML = '';
+            cells.forEach((value, index) => {
+                const cell = document.createElement('div');
+                cell.classList.add('cell');
+                cell.textContent = value;
+                cell.onclick = () => handleTicTacToeClick(index);
+                ticTacToeGrid.appendChild(cell);
+            });
+        }
+
+        function handleTicTacToeClick(index) {
+            if (!cells[index] && !checkWinner()) {
+                cells[index] = currentPlayer;
+                currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+                renderTicTacToe();
+                checkWinner();
+            }
+        }
+
+        function checkWinner() {
+            const winningCombinations = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8],
+                [0, 3, 6], [1, 4, 7], [2, 5, 8],
+                [0, 4, 8], [2, 4, 6]
+            ];
+            for (const combination of winningCombinations) {
+                const [a, b, c] = combination;
+                if (cells[a] && cells[a] === cells[b] && cells[a] === cells[c]) {
+                    ticTacToeMessage.textContent = `${cells[a]} Wins!`;
+                    return cells[a];
+                }
+            }
+            if (!cells.includes(null)) {
+                ticTacToeMessage.textContent = "It's a Draw!";
+                return 'Draw';
+            }
+            return null;
+        }
+
+        function resetTicTacToe() {
+            cells.fill(null);
+            currentPlayer = 'X';
+            ticTacToeMessage.textContent = '';
+            renderTicTacToe();
+        }
+
+        renderTicTacToe();
+
+        
+        function playRPS(playerChoice) {
+            const choices = ['Rock', 'Paper', 'Scissors'];
+            const computerChoice = choices[Math.floor(Math.random() * choices.length)];
+            let result;
+            if (playerChoice === computerChoice) {
+                result = "It's a tie!";
+            } else if (
+                (playerChoice === 'Rock' && computerChoice === 'Scissors') ||
+                (playerChoice === 'Paper' && computerChoice === 'Rock') ||
+                (playerChoice === 'Scissors' && computerChoice === 'Paper')
+            ) {
+                result = `You win! ${playerChoice} beats ${computerChoice}`;
+            } else {
+                result = `You lose! ${computerChoice} beats ${playerChoice}`;
+            }
+            document.getElementById('rpsResult').textContent = result;
+        }
+
+        
+        let randomNumber = Math.floor(Math.random() * 10) + 1;
+        function playGuess() {
+            const guess = Number(document.getElementById('guessInput').value);
+            const guessMessage = document.getElementById('guessMessage');
+            if (guess === randomNumber) {
+                guessMessage.textContent = "Correct! You guessed the number!";
+            } else if (guess < randomNumber) {
+                guessMessage.textContent = "Too low! Try again.";
+            } else {
+                guessMessage.textContent = "Too high! Try again.";
+            }
+        }
+
+        function resetGuess() {
+            randomNumber = Math.floor(Math.random() * 10) + 1;
+            document.getElementById('guessMessage').textContent = '';
+            document.getElementById('guessInput').value = '';
+        }
+    </script>
+    <div class="game-container game">
+        <h2>Dice Roller</h2>
+        <p>Roll the dice and see what you get!</p>
+        <button onclick="rollDice()">Roll Dice</button>
+        <p id="diceResult"></p>
+    </div>
+    
+    <script>
+        function rollDice() {
+            const dice1 = Math.floor(Math.random() * 6) + 1;
+            const dice2 = Math.floor(Math.random() * 6) + 1;
+            const total = dice1 + dice2;
+            document.getElementById('diceResult').textContent = `You rolled a ${dice1} and a ${dice2} (Total: ${total})!`;
+        }
+    </script>
+    
+
+</body>
+</html>
