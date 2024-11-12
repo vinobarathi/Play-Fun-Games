@@ -21,6 +21,8 @@
         }
         h1 {
             color: #f6f2ef;
+text-shadow: 2px 2px 4px #f44040, -2px -2px 4px #b31616, 2px -2px 4px #cd1616, -2px 2px 4px #e01717; /* Create outline effect */
+    
         }
         .game-container {
             width: 100%;
